@@ -10,7 +10,7 @@ export default function CheckoutPage() {
     firstName: '', lastName: '', email: '',
     street: '', city: '', state: '', zipcode: '', country: '', phone: ''
   });
-  const [payment, setPayment] = useState('cod'); // default Cash on Delivery
+  const [payment, setPayment] = useState('cod'); 
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
