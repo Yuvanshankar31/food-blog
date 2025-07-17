@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const API = 'http://localhost:5000/api';
 
   const [cart, setCart] = useState([]);
   const [delivery, setDelivery] = useState({

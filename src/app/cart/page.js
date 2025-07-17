@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function CartPage() {
   const [cart, setCart] = useState([]);
@@ -54,7 +55,7 @@ export default function CartPage() {
           <div className="cart-grid">
             {cart.map((item, idx) => (
               <div className="cart-card" key={idx}>
-                <img src={item.image || productImage} alt={item.title} />
+                <Image src={item.image || productImage} alt={item.title} width={180} height={120} style={{objectFit:'cover',borderRadius:'12px'}} />
                 <h3>{item.title}</h3>
                 <p className="price">₹{item.price} × {item.quantity}</p>
                 <p>Total: ₹{item.price * item.quantity}</p>

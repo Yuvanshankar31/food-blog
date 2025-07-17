@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   const [items, setItems] = useState([]);
@@ -9,8 +10,6 @@ export default function Home() {
   const [cart, setCart] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const router = useRouter();
-
-  const API = 'http://localhost:5000/api';
 
   const categories = [
     { name: 'All', image: 'https://i.pinimg.com/1200x/77/32/2f/77322f963a2876b7580127c8fa16082f.jpg' },
@@ -54,7 +53,7 @@ export default function Home() {
 
     const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
     setCart(storedCart);
-  }, []);
+  }, [router]);
 
   const handleAddToCart = (item) => {
     const existingIndex = cart.findIndex((cartItem) => cartItem._id === item._id);
@@ -110,7 +109,7 @@ export default function Home() {
             className={`category-card ${selectedCategory === cat.name ? 'active' : ''}`}
             onClick={() => setSelectedCategory(cat.name)}
           >
-            <img src={cat.image} alt={cat.name} />
+            <Image src={cat.image} alt={cat.name} width={120} height={80} style={{objectFit:'cover',borderRadius:'8px'}} />
             <p>{cat.name}</p>
           </div>
         ))}
@@ -125,7 +124,7 @@ export default function Home() {
           ) : (
             filteredItems.map((item) => (
               <div className="food-card" key={item._id}>
-                <img src={item.image} alt={item.title} />
+                <Image src={item.image} alt={item.title} width={180} height={120} style={{objectFit:'cover',borderRadius:'12px'}} />
                 <h3>{item.title}</h3>
                 <p className="price">₹{item.price}</p>
                 <button className="add-btn" onClick={() => handleAddToCart(item)}>+</button>

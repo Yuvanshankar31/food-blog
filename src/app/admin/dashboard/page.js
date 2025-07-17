@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import './admin.css';
+import Image from 'next/image';
 
 export default function AdminDashboard() {
   const [title, setTitle] = useState('');
@@ -129,10 +130,13 @@ export default function AdminDashboard() {
               placeholder="Category (e.g., Briyani)"
             />
             {imageUrl && (
-              <img
+              <Image
                 src={imageUrl}
                 className="preview"
                 alt="Preview"
+                width={120}
+                height={80}
+                style={{objectFit:'cover',borderRadius:'8px'}}
                 onError={(e) => (e.target.src = fallbackImage)}
               />
             )}
@@ -150,9 +154,12 @@ export default function AdminDashboard() {
               <div className="cards">
                 {items.map((item) => (
                   <div key={item._id} className="item-card hover-pop">
-                    <img
+                    <Image
                       src={item.image || fallbackImage}
                       alt={item.title}
+                      width={120}
+                      height={80}
+                      style={{objectFit:'cover',borderRadius:'8px'}}
                       onError={(e) => (e.target.src = fallbackImage)}
                     />
                     <h4>{item.title}</h4>
