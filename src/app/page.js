@@ -10,6 +10,8 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const router = useRouter();
 
+  const API = 'http://localhost:5000/api';
+
   const categories = [
     { name: 'All', image: 'https://i.pinimg.com/1200x/77/32/2f/77322f963a2876b7580127c8fa16082f.jpg' },
     { name: 'Briyani', image: 'https://i.pinimg.com/736x/47/bf/7d/47bf7de55cdb95fdbec84526af98ccdd.jpg' },
@@ -24,16 +26,26 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    const storedItems = JSON.parse(localStorage.getItem('items') || '[]');
-    setItems(storedItems);
+   
+    fetch(`${API}/items`)
+      .then(res => res.json())
+      .then(setItems);
+
+   
     const user = localStorage.getItem('user');
-    if (user) setName(user);
+    const auth = localStorage.getItem('auth');
+    if (!auth) {
+      router.push('/login');
+    } else {
+      setName(user);
+    }
+
     const storedCart = JSON.parse(localStorage.getItem('cart') || '[]');
     setCart(storedCart);
   }, []);
 
   const handleAddToCart = (item) => {
-    const existingIndex = cart.findIndex((cartItem) => cartItem.title === item.title);
+    const existingIndex = cart.findIndex((cartItem) => cartItem._id === item._id);
     let updatedCart;
     if (existingIndex !== -1) {
       updatedCart = cart.map((cartItem, idx) =>
@@ -49,13 +61,13 @@ export default function Home() {
   const handleLogout = () => {
     localStorage.removeItem('auth');
     localStorage.removeItem('user');
+    localStorage.removeItem('cart');
     router.push('/login');
   };
 
-  const filteredItems =
-    selectedCategory === 'All'
-      ? items
-      : items.filter((item) => item.category === selectedCategory);
+  const filteredItems = selectedCategory === 'All'
+    ? items
+    : items.filter((item) => item.category === selectedCategory);
 
   return (
     <div className="home">
@@ -65,6 +77,7 @@ export default function Home() {
           <span className="welcome-text">Welcome, {name}</span>
           <Link href="/">Home</Link>
           <Link href="/cart">Cart ({cart.reduce((sum, item) => sum + item.quantity, 0)})</Link>
+          <Link href="/orders">Orders</Link>
           <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </nav>
       </header>
@@ -75,7 +88,6 @@ export default function Home() {
           <p>Choose from a diverse menu crafted with the finest ingredients and expertise.</p>
           <button className="view-menu-btn">View Menu</button>
         </div>
-      
       </section>
 
       {/* Categories */}
@@ -99,8 +111,8 @@ export default function Home() {
           {filteredItems.length === 0 ? (
             <p>No items found in {selectedCategory}.</p>
           ) : (
-            filteredItems.map((item, idx) => (
-              <div className="food-card" key={idx}>
+            filteredItems.map((item) => (
+              <div className="food-card" key={item._id}>
                 <img src={item.image} alt={item.title} />
                 <h3>{item.title}</h3>
                 <p className="price">₹{item.price}</p>

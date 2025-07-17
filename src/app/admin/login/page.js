@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from './login.module.css'; // using CSS module
+import styles from './login.module.css'; 
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -11,11 +11,14 @@ export default function LoginPage() {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Dummy auth logic (replace with real logic if needed)
-    // Accept any credentials for admin
-    localStorage.setItem('admin_auth', 'true');
-    localStorage.setItem('admin_user', email);
-    router.push('/admin/dashboard');
+    // Check admin credentials
+    if (email === 'sksyuvanshankar@gmail.com' && password === 'Yuvan@gmail.com') {
+      localStorage.setItem('admin_auth', 'true');
+      localStorage.setItem('admin_user', email);
+      router.push('/admin/dashboard');
+    } else {
+      alert('Invalid admin credentials!');
+    }
   };
 
   return (
