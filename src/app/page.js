@@ -26,12 +26,24 @@ export default function Home() {
   ];
 
   useEffect(() => {
-   
-    fetch(`${API}/items`)
-      .then(res => res.json())
-      .then(setItems);
+    // Load items from localStorage or initialize with default menu
+    let storedItems = JSON.parse(localStorage.getItem('items') || 'null');
+    if (!storedItems) {
+      storedItems = [
+        { _id: '1', title: 'Chicken Briyani', price: 180, image: 'https://i.pinimg.com/736x/47/bf/7d/47bf7de55cdb95fdbec84526af98ccdd.jpg', category: 'Briyani' },
+        { _id: '2', title: 'Chocolate Cake', price: 120, image: 'https://i.pinimg.com/1200x/42/b1/3a/42b13acee066b8e5ff2bac26e0f881ce.jpg', category: 'Deserts' },
+        { _id: '3', title: 'Lemonade', price: 60, image: 'https://i.pinimg.com/1200x/7d/9f/0d/7d9f0df2974c4d27a8db9e9548ba2f9a.jpg', category: 'Beverages' },
+        { _id: '4', title: 'Paneer Tikka', price: 150, image: 'https://i.pinimg.com/1200x/bf/08/2f/bf082ffd965d180fc23d0f65585b2329.jpg', category: 'Veg' },
+        { _id: '5', title: 'Tomato Soup', price: 80, image: 'https://i.pinimg.com/1200x/2c/81/7b/2c817b5bea67741e3d61b840275b692f.jpg', category: 'Soup' },
+        { _id: '6', title: 'Spring Rolls', price: 100, image: 'https://i.pinimg.com/736x/8a/c7/93/8ac793a9a06488953b21624153285829.jpg', category: 'Starters' },
+        { _id: '7', title: 'Veg Meals', price: 200, image: 'https://i.pinimg.com/1200x/f7/41/5f/f7415f93ecdccc842224b4790f541112.jpg', category: 'Meals' },
+        { _id: '8', title: 'Fish Curry', price: 220, image: 'https://i.pinimg.com/1200x/6f/7b/14/6f7b1462deac16b25c4a3398b0040315.jpg', category: 'Seafood' },
+        { _id: '9', title: 'Noodles', price: 130, image: 'https://i.pinimg.com/736x/e3/ac/a4/e3aca4310acc6d2a0712baf724e64041.jpg', category: 'Chinese' }
+      ];
+      localStorage.setItem('items', JSON.stringify(storedItems));
+    }
+    setItems(storedItems);
 
-   
     const user = localStorage.getItem('user');
     const auth = localStorage.getItem('auth');
     if (!auth) {

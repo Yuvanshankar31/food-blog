@@ -12,67 +12,45 @@ export default function AdminDashboard() {
   const [editItemId, setEditItemId] = useState(null);
   const [orders, setOrders] = useState([]);
 
-  const API = 'http://localhost:5000/api';
   const fallbackImage = '/fallback.png'; 
 
   useEffect(() => {
     loadItems();
   }, []);
 
-  const loadItems = async () => {
-    try {
-      const res = await fetch(`${API}/items`);
-      const data = await res.json();
-      setItems(data);
-    } catch (err) {
-      console.error('Error loading items:', err);
-    }
+  const loadItems = () => {
+    const storedItems = JSON.parse(localStorage.getItem('items') || '[]');
+    setItems(storedItems);
   };
 
-  const loadOrders = async () => {
-    try {
-      const res = await fetch(`${API}/orders`);
-      const data = await res.json();
-      setOrders(data);
-    } catch (err) {
-      console.error('Error loading orders:', err);
-    }
+  const loadOrders = () => {
+    const storedOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
+    setOrders(storedOrders);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!title || !price || !imageUrl || !category) {
       alert('Please fill all fields.');
       return;
     }
 
-    const newItem = { title, price, image: imageUrl, category };
-
-    try {
-      if (editItemId) {
-        await fetch(`${API}/items/${editItemId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newItem),
-        });
-      } else {
-        await fetch(`${API}/items`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newItem),
-        });
-      }
-
-      setTitle('');
-      setPrice('');
-      setImageUrl('');
-      setCategory('');
-      setEditItemId(null);
-      loadItems();
-      alert('Saved!');
-    } catch (err) {
-      console.error('Error saving item:', err);
-      alert('Failed to save item.');
+    let storedItems = JSON.parse(localStorage.getItem('items') || '[]');
+    if (editItemId) {
+      storedItems = storedItems.map(item =>
+        item._id === editItemId ? { ...item, title, price, image: imageUrl, category } : item
+      );
+    } else {
+      const newItem = { _id: Date.now().toString(), title, price, image: imageUrl, category };
+      storedItems.push(newItem);
     }
+    localStorage.setItem('items', JSON.stringify(storedItems));
+    setTitle('');
+    setPrice('');
+    setImageUrl('');
+    setCategory('');
+    setEditItemId(null);
+    loadItems();
+    alert('Saved!');
   };
 
   const handleEdit = (item) => {
@@ -84,14 +62,12 @@ export default function AdminDashboard() {
     setActiveTab('add');
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = (id) => {
     if (!window.confirm('Delete?')) return;
-    try {
-      await fetch(`${API}/items/${id}`, { method: 'DELETE' });
-      loadItems();
-    } catch (err) {
-      console.error('Error deleting item:', err);
-    }
+    let storedItems = JSON.parse(localStorage.getItem('items') || '[]');
+    storedItems = storedItems.filter(item => item._id !== id);
+    localStorage.setItem('items', JSON.stringify(storedItems));
+    loadItems();
   };
 
   return (

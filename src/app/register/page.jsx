@@ -13,7 +13,7 @@ export default function RegisterPage() {
   const [message, setMessage] = useState('');
   const router = useRouter();
 
-  const handleRegister = async (e) => {
+  const handleRegister = (e) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage('');
@@ -31,38 +31,28 @@ export default function RegisterPage() {
       return;
     }
 
-    try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-          action: 'register'
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setMessage('Registration successful! Please login.');
-        // Clear form
-        setUsername('');
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
-      } else {
-        setMessage(data.message || 'Registration failed');
-      }
-    } catch (error) {
-      console.error('Registration error:', error);
-      setMessage('Network error. Please try again.');
-    } finally {
+    // Check for duplicate username or email
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    if (users.some(u => u.username === username)) {
+      setMessage('Username already exists.');
       setIsLoading(false);
+      return;
     }
+    if (users.some(u => u.email === email)) {
+      setMessage('Email already registered.');
+      setIsLoading(false);
+      return;
+    }
+
+    // Save new user
+    users.push({ username, email, password });
+    localStorage.setItem('users', JSON.stringify(users));
+    setMessage('Registration successful! Please login.');
+    setUsername('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
+    setIsLoading(false);
   };
 
   return (

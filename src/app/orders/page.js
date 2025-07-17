@@ -22,13 +22,12 @@ export default function CheckoutPage() {
     setDelivery({ ...delivery, [e.target.name]: e.target.value });
   };
 
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = () => {
     if (cart.length === 0) {
       alert('Cart is empty!');
       return;
     }
 
-    const token = localStorage.getItem('auth'); // assume logged in
     const orderData = {
       customer: delivery,
       paymentMethod: payment,
@@ -36,30 +35,15 @@ export default function CheckoutPage() {
       date: new Date().toISOString()
     };
 
-    try {
-      const response = await fetch(`${API}/orders`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(orderData)
-      });
+    // Save locally
+    let userOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
+    userOrders.push(orderData);
+    localStorage.setItem('userOrders', JSON.stringify(userOrders));
 
-      if (!response.ok) throw new Error('Failed to save order');
-
-      // Save locally too
-      let userOrders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-      userOrders.push(orderData);
-      localStorage.setItem('userOrders', JSON.stringify(userOrders));
-
-      localStorage.removeItem('cart'); // clear cart
-      alert('Order placed successfully!');
-      router.push('/orders');
-    } catch (err) {
-      console.error(err);
-      alert('Error placing order.');
-    }
+    localStorage.removeItem('cart'); // clear cart
+    alert('Order placed successfully!');
+    // Optionally, redirect to a 'My Orders' page or clear form
+    router.push('/orders');
   };
 
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);

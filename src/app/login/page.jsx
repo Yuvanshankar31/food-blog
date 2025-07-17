@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState('');
   const router = useRouter();
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
     setIsLoading(true);
     setMessage('');
@@ -24,37 +24,18 @@ export default function LoginPage() {
       return;
     }
 
-    try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username,
-          email,
-          password,
-          action: 'login'
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        // Save to localStorage
-        localStorage.setItem('auth', 'true');
-        localStorage.setItem('user', data.user.username);
-        localStorage.setItem('userEmail', data.user.email);
-        
-        setMessage('Login successful!');
-        router.push('/'); // Redirect to homepage
-      } else {
-        setMessage(data.message || 'Login failed');
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      setMessage('Network error. Please try again.');
-    } finally {
+    // Check credentials in localStorage
+    const users = JSON.parse(localStorage.getItem('users') || '[]');
+    const user = users.find(u => u.username === username && u.email === email && u.password === password);
+    if (user) {
+      localStorage.setItem('auth', 'true');
+      localStorage.setItem('user', user.username);
+      localStorage.setItem('userEmail', user.email);
+      setMessage('Login successful!');
+      setIsLoading(false);
+      router.push('/');
+    } else {
+      setMessage('Invalid credentials.');
       setIsLoading(false);
     }
   };
