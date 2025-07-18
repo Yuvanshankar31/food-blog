@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import './login.css'; // Make sure this file exists in the same folder
+import './login.css';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -17,14 +17,14 @@ export default function LoginPage() {
     setIsLoading(true);
     setMessage('');
 
-    // Validate all fields
+
     if (!username || !email || !password) {
       setMessage("Please fill all fields.");
       setIsLoading(false);
       return;
     }
 
-    // Check credentials in localStorage
+    
     const users = JSON.parse(localStorage.getItem('users') || '[]');
     const user = users.find(u => u.username === username && u.email === email && u.password === password);
     if (user) {

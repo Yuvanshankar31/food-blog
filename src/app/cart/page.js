@@ -8,7 +8,7 @@ export default function CartPage() {
   const [cart, setCart] = useState([]);
   const router = useRouter();
 
-  // Replace this path with your image inside /public folder
+  
   const productImage = '/cart-product.png';
 
   useEffect(() => {
